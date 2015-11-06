@@ -4,6 +4,8 @@ TapeTape
 Create a playlist from youtube, share it with a string of text, your
 friends will discover the musics each one at a time. Like a mixtape!
 
+![TapeTape on gnome shell](tapetape_screenshot.png?raw=true "TapeTape on gnome shell")
+
 This desktop program is multiplatform (WIN and *NIX are supported).
 
 # Contributors quick start
