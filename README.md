@@ -14,7 +14,8 @@ The only development dependency of this project is [Node.js](https://nodejs.org)
 So just make sure you have it installed.  Then type a few commands known
 to every Node developer...
 
-``` git clone https://github.com/rigelk/surprize.git 
+``` bash
+git clone https://github.com/rigelk/surprize.git 
 cd surprize
 npm install 
 npm start
