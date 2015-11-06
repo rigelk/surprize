@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/rigelk/surprize.png?label=ready&title=Ready)](https://waffle.io/rigelk/surprize)
 TapeTape
 ==============
 
