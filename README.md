@@ -1,4 +1,4 @@
-TapeTape ![Badge](http://forthebadge.com/images/badges/contains-cat-gifs.svg "")
+TapeTape
 ==============
 
 Create a playlist from youtube, share it with a string of text, your
