@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Surpraïze</title>
+
+    <link href="./stylesheets/new.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="bower_components/semantic-ui/dist/semantic.min.css">
+
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+    <script src="bower_components/jquery-ui-sortable/jquery-ui-sortable.min.js"></script>
+    <script src="bower_components/semantic-ui/dist/semantic.min.js"></script>
+    <script src="bower_components/lockr/lockr.min.js"></script>
+    <script src="vendor/electron_boilerplate/env_config.js"></script>
+    <script src="vendor/electron_boilerplate/context_menu.js"></script>
+    <script src="vendor/electron_boilerplate/external_links.js"></script>
+
+    <script src="vendor/require.js"></script>
+    <!--<script type="text/javascript" src="new.js"></script>-->
+    <script>
+        requirejs(['new'], function(){
+            /*console.log('loaded')
+            createPlaylist('hello')*/
+        });
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div id="new_progress" class="ui three doubling steps computer only">
+        <div id="step1" class="active step">
+            <i class="music icon"></i>
+            <div class="content">
+                <div class="title">Composition</div>
+                <div class="description">Choose your songs</div>
+            </div>
+        </div>
+        <div id="step2" class="step">
+            <i class="share alternate icon"></i>
+            <div class="content">
+                <div class="title">Partage</div>
+                <div class="description">Share your tape !</div>
+            </div>
+        </div>
+        <div id="step3" class="step">
+            <i class="smile icon"></i>
+            <div class="content">
+                <div class="title">Done !</div>
+                <div class="description">Yup. It’s that simple</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="new_segment" class="ui attached segment">
+        <!--<div class="ui right close rail">
+            <div class="ui left aligned segment">
+                <button class="ui button">></button>
+            </div>
+        </div>
+        <div class="ui left close rail">
+            <div class="ui right aligned segment">
+                <button class="ui button"><</button>
+            </div>
+        </div>-->
+
+        <div id="new_list">
+            <table id="new_table" class="ui blue table" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Musics</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+
+            <div class="ui search">
+                <div class="ui icon input">
+                    <input id="input" class="prompt" placeholder="search for tapes..." autofocus type="text">
+                    <i class="search icon"></i>
+                </div>
+                <div class="results" style="width:100%;"></div>
+            </div>
+        </div>
+    </div>
+    <div id="new_buttons">
+        <div class="ui two bottom attached buttons">
+            <div onclick="window.location='app.html';"
+                 class="ui button labeled icon">Back<i class="angle left icon"></i> </div>
+            <div id="record"
+                 class="ui button right labeled icon blue"><i class="angle right icon"></i>Record the tape! </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</body>
+</html>
+
+<script>
+    $('#step1').click(function () {
+        window.location = '#';
+    });
+    $('#step2').click(function () {
+        window.location = 'share.html';
+    })
+</script>
+<script>
+    $(function() {
+        $( "tbody" ).sortable({
+            placeholder: "ui-sortable-placeholder",
+            update: function() {
+                var data = $(this).sortable( "toArray" )
+                var musics = Lockr.get('musics')
+                var musics2 = []
+                for(var i=0; i<data.length; i++){
+                    musics2.push($.grep(musics, function(e){ return e.id == data[i]; })[0])
+                }
+                Lockr.set('musics',musics2)
+                generateTbody()
+            }
+        });
+    });
+</script>
+<script>
+    $('.ui.search')
+            .search({
+                apiSettings: {
+                    url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=3&q={query}&type=video&videoEmbeddable=true&key=AIzaSyDYcUmUXKPmrRm68TaC4mrZEMCfTt9dNMo',
+                    onResponse: function(res){
+                        var formatedRes = {
+                                    results : []
+                                }
+
+                        if(!res || !res.items) {
+                            return {success: false}
+                        }
+
+                        $.each(res.items, function(index, item) {
+                            // add item to results
+                            console.log(formatedRes)
+                            formatedRes.results.push({
+                                title       : item.snippet.title,
+                                description : item.snippet.description,
+                                url         : 'javascript:addMusic(\''+item.id.videoId+'\',\''+item.snippet.title+'\');'
+                            });
+                        });
+
+                        console.log(formatedRes)
+                        return formatedRes
+                    }
+                },
+                type: 'standard',
+                minCharacters: 3,
+                cache: true,
+                searchDelay: 300
+            })
+    ;
+
+    function addMusic(id,title){
+        // flush the input
+        document.getElementById("input").value = ''
+        // store the new music in localstorage
+        var musics = Lockr.get('musics',[])
+        musics.push({
+                    title: title,
+                    id: id
+                }
+        )
+        Lockr.set('musics',musics)
+        generateTbody()
+    }
+
+    function deleteMusic(id){
+        var musics = Lockr.get('musics',[])
+        var musics2 = []
+        for (var i = 0; i < musics.length; i++) {
+            if (musics[i].id != id)
+                musics2.push(musics[i])
+        }
+        Lockr.set('musics',musics2)
+        generateTbody()
+    }
+
+    function generateTbody(){
+        var musics = Lockr.get('musics',[])
+        var tbody = document.getElementById("tbody")
+
+        tbody.innerHTML = ''
+        for (var i = 0; i < musics.length; i++) {
+            tbody.innerHTML += '<tr id=\"'+musics[i].id+'\">                <td><strong>#'+(i+1)+' </strong> '+musics[i].title+'</td>        <td class="right aligned"><a href="#" onclick="deleteMusic(\''+musics[i].id+'\');return false;"><i class="remove icon"></i></a></td>        </tr>'
+        }
+    }
+
+    function flushMusics(){
+        Lockr.set('musics',[])
+    }
+
+    function sendIds(){
+        var ids = $('#tbody').sortable("toArray")
+        var yaml = require('js-yaml')
+        //var ipc = require('electron-safe-ipc/renderer-bundle')
+        /*var ipc = require('ipc')
+        ipc.send('ids',"hello")
+        console.log('ids sent')*/
+        var object = {surpraizeVersion: 0.1,gifter:"(optional) name",say:"(optional) motive sentence",musics: ids}
+
+        var PastebinAPI = require('pastebin-js'),
+                pastebin = new PastebinAPI({
+                    'api_dev_key' : 'c942f0359a0866f49fad2a0eb76aa6a0'
+                });
+
+        pastebin
+                .createPaste(yaml.safeDump(object), "", null, 1, "N")
+                .then(function (data) {
+                    // we have succesfully pasted it. Data contains the id
+                    // TODO save it in the localstorage
+                    console.log(data)
+                })
+                .fail(function (err) {
+                    console.log(err)
+                })
+    }
+
+    var button = document.getElementById('record');
+    button.onclick = function() {
+        sendIds()
+    };
+
+    generateTbody()
+</script>

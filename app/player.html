@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Surpraïze</title>
+
+    <link href="./stylesheets/player.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="bower_components/semantic-ui/dist/semantic.min.css">
+
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+    <script src="bower_components/semantic-ui/dist/semantic.min.js"></script>
+    <script src="vendor/electron_boilerplate/env_config.js"></script>
+    <script src="vendor/electron_boilerplate/context_menu.js"></script>
+    <script src="vendor/electron_boilerplate/external_links.js"></script>
+
+    <script src="vendor/require.js"></script>
+    <script>
+        requirejs(['app'], function (app) {});
+    </script>
+
+</head>
+<body>
+    <div id="player">...loading</div>
+
+    <div class="container">
+        <div class="ui center aligned basic segment">
+
+            <div style="display: none;" id="info">loading...</div>
+        </div>
+    </div>
+
+</body>
+</html>
+<script>
+    // Récupération des paramètres GET
+    var params = function() {
+        function urldecode(str) {
+            return decodeURIComponent((str+'').replace(/\+/g, '%20'));
+        }
+
+        function transformToAssocArray( prmstr ) {
+            var params = {};
+            var prmarr = prmstr.split("&");
+            for ( var i = 0; i < prmarr.length; i++) {
+                var tmparr = prmarr[i].split("=");
+                params[tmparr[0]] = urldecode(tmparr[1]);
+            }
+            return params;
+        }
+
+        var prmstr = window.location.search.substr(1);
+        return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+    }();
+
+    // Création du script YT
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    // Création du player
+    var player
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            videoId: params['#'], // this is the id of the video at youtube (the stuff after "?v="),
+            playerVars: { 'fs':0, 'autoplay':1, 'disablekb':1, 'frameborder':0, 'iv_load_policy':3, 'modestbranding':1},
+            loop: true,
+            events: {
+                onReady: function (e) {
+                    info.innerHTML = 'video is loaded';
+                    e.target.playVideo();
+                },
+                onStateChange: function (event) {
+                    if (event.data === 1) {
+                        info.innerHTML = 'video started playing';
+                    }
+                }
+            }
+        });
+        // you can do more stuff with the player variable
+    }
+
+
+    /*// Ajout de css à l’iframe du player
+    $(document).ready(function() {
+        $('#player').load(function(){
+            $('#player').contents().find('head').append('<link href="stylesheets/player-iframe.less" rel="stylesheet" type="text/css" />');
+        });
+    });*/
+</script>
+
+
+<script type="text/javascript">
+    /*var frameListener;
+    $(window).load(function () {
+        frameListener = setInterval("frameLoaded()", 50);
+    });
+    function frameLoaded() {
+        var frame = $('iframe').get(0);
+        if (frame != null) {
+            var frmHead = $(frame).contents().find('head');
+            if (frmHead != null) {
+                clearInterval(frameListener); // stop the listener
+                //frmHead.append($('style, link[rel=stylesheet]').clone()); // clone existing css link
+                frmHead.append($("<link/>", { rel: "stylesheet", href: "https://localhost/stylesheets/player-iframe.css", type: "text/css" })); // or create css link yourself
+            }
+        }
+    }*/
+</script>

@@ -1,0 +1,22 @@
+{
+  "name": "app",
+  "main": "app.js",
+  "version": "0.0.0",
+  "homepage": "https://github.com/szwacz/electron-boilerplate",
+  "authors": [
+    "Pierre-Antoine Rault <par@rigelk.eu>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "semantic-ui": "~2.0.8",
+    "jquery-ui-sortable": "*",
+    "lockr": "~0.8.2"
+  }
+}

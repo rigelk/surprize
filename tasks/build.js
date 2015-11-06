@@ -23,10 +23,12 @@ var paths = {
     ],
     copyFromAppDir: [
         './main.js',
+	'./new.js',
         './spec.js',
         './node_modules/**',
         './bower_components/**',
         './vendor/**',
+	'./images/**',
         './**/*.html'
     ],
 }
@@ -67,7 +69,7 @@ gulp.task('transpile-watch', transpileTask);
 
 
 var lessTask = function () {
-    return gulp.src('app/stylesheets/main.less')
+    return gulp.src('app/stylesheets/*')
     .pipe(less())
     .pipe(gulp.dest(destDir.path('stylesheets')));
 };

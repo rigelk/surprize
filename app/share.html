@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Surpraïze</title>
+
+    <link href="./stylesheets/new.css" rel="stylesheet" type="text/css">
+    <link href="./stylesheets/share.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="bower_components/semantic-ui/dist/semantic.min.css">
+
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+    <script src="bower_components/jquery-ui-sortable/jquery-ui-sortable.min.js"></script>
+    <script src="bower_components/semantic-ui/dist/semantic.min.js"></script>
+    <script src="bower_components/lockr/lockr.min.js"></script>
+    <script src="vendor/electron_boilerplate/env_config.js"></script>
+    <script src="vendor/electron_boilerplate/context_menu.js"></script>
+    <script src="vendor/electron_boilerplate/external_links.js"></script>
+
+    <script src="vendor/require.js"></script>
+    <!--<script type="text/javascript" src="new.js"></script>-->
+    <script>
+        //requirejs(['share'], function(){});
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+
+    <div id="new_progress" class="ui three doubling steps computer only">
+        <div id="step1" class="step">
+            <i class="music icon"></i>
+            <div class="content">
+                <div class="title">Composition</div>
+                <div class="description">Choose your songs</div>
+            </div>
+        </div>
+        <div id="step2" class="active step">
+            <i class="share alternate icon"></i>
+            <div class="content">
+                <div class="title">Partage</div>
+                <div class="description">Share your tape !</div>
+            </div>
+        </div>
+        <div id="step3" class="step">
+            <i class="smile icon"></i>
+            <div class="content">
+                <div class="title">Done !</div>
+                <div class="description">Yup. It’s that simple</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="share_display">
+        <div class="textAbove">share that code with your friends</div>
+        <span class="code">
+            <span class="hashtag">#</span>
+            <span id="code">veHMo$s</span>
+        </span>
+        <div><a id="savePlaylist">save it to your playlists</a> or just <a href="app.html">go back home</a> :)</div>
+    </div>
+
+</div>
+</div>
+
+</body>
+</html>
+
+<script>
+    function remove_duplicates(array_){
+        var ret_array = new Array();
+        for (var a = array_.length - 1; a >= 0; a--) {
+            for (var b = array_.length - 1; b >= 0; b--) {
+                if(array_[a] == array_[b] && a != b){
+                    delete array_[b];
+                }
+            };
+            if(array_[a] != undefined)
+                ret_array.push(array_[a]);
+        };
+        return ret_array;
+    }
+
+    $('#step1').click(function () {
+        window.location = 'new.html';
+    });
+    $('#step3').click(function () {
+
+    })
+    $("#code").click(function(){
+        var clipboard = require("clipboard.js")
+        clipboard.copy($("#code").text()).then(
+            function(){console.log("success");},
+            function(err){console.log("failure", err);}
+        );
+    });
+    $("#savePlaylist").click(function(){
+        var playlists = Lockr.get('playlists',[])
+        playlists.push($("#code").text())
+        Lockr.set('playlists',remove_duplicates(playlists))
+    })
+</script>
